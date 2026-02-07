@@ -1,0 +1,35 @@
+﻿@{
+    ViewData["Title"] = "Login";
+    Layout = "/Pages/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 text-center">
+
+            <h2 class="mb-4">MovieHub Login</h2>
+
+            <p>Please sign in using your Google account</p>
+
+            <a class="btn btn-danger btn-lg" href="/Auth/StartLogin">
+                <i class="fa fa-google"></i> Login with Google
+            </a>
+
+        </div>
+    </div>
+</div>
+
+<style>
+    body {
+        background-color: #f5f5f5;
+    }
+
+    .container {
+        margin-top: 120px;
+    }
+
+    .btn-danger {
+        padding: 12px 25px;
+        font-size: 18px;
+    }
+</style>
