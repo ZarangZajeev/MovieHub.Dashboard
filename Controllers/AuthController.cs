@@ -46,15 +46,33 @@ namespace MovieHub.Dashboard.Controllers
         {
             var result = await HttpContext.AuthenticateAsync();
 
-            var claims = result.Principal.Identities
-                .FirstOrDefault()?.Claims
-                .Select(c => new
-                {
-                    c.Type,
-                    c.Value
-                });
+            var email = result.Principal.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value;
+            var name = result.Principal.FindFirst(System.Security.Claims.ClaimTypes.Name)?.Value;
+            var googleId = result.Principal.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
 
-            return Json(claims);
+            var apiUrl = $"{_authSettings.APIRpoperties.BaseUrl}" +
+                 $"{_authSettings.APIRpoperties.Endpoints.Google.Login}";
+
+            using var client = new HttpClient();
+
+            var request = new
+            {
+                Email = email,
+                Name = name,
+                GoogleId = googleId
+            };
+
+            var response = await client.PostAsJsonAsync(apiUrl, request);
+
+            if (!response.IsSuccessStatusCode)
+                return Unauthorized();
+
+            var tokenResponse = await response.Content.ReadFromJsonAsync<TokenResponse>();
+
+            // Store JWT token
+            HttpContext.Session.SetString("JWToken", tokenResponse.Token);
+
+            return RedirectToAction("Index", "Home");
         }
     }
 }
